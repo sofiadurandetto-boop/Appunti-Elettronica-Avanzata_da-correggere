@@ -1,0 +1,231 @@
+\documentclass[12pt, a4paper]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[italian]{babel}
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+\usepackage{hyperref}
+\usepackage{booktabs}
+
+\title{\Huge \textbf{Elettronica Applicata}\\ \Large Appunti Integrati del Corso}
+\author{\textbf{Corso di Laurea Magistrale in Tecnologie Avanzate}}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\cleardoublepage
+\tableofcontents
+\cleardoublepage
+
+% ==========================================
+% PARTE I: RIPASSO E FONDAMENTI DI CIRCUITI
+% ==========================================
+\part{Ripasso di Elettronica e Teoria dei Circuiti}
+
+\chapter{Dai Campi Elettromagnetici alle Leggi Circuitali (QSA)}
+
+\section{Introduzione al Corso e Convenzioni}
+\subsection{Analisi vs. Sintesi Circuitale}
+In ambito elettronico si distinguono due classi fondamentali di problemi:
+\begin{itemize}
+    \item \textbf{Analisi}: Dato un circuito topologicamente definito, determinare le correnti nei rami $I_k$ e le tensioni ai nodi $V_k$ applicando le leggi circuitali.
+    \item \textbf{Sintesi (Design)}: Progettare l'architettura interna di un blocco funzionale affinché soddisfi specifiche funzioni di ingresso/uscita.
+\end{itemize}
+
+\subsection{Notazioni Formali}
+Nel corso si adotterà la seguente convenzione di notazione:
+\begin{itemize}
+    \item $v(t), i(t)$: Grandezze tempo-varianti nel dominio del tempo (regimi alternati o transitori).
+    \item $V, I$: Valori stazionari in corrente continua (DC).
+    \item $V(s), I(s)$: Variabili trasformate nel dominio della frequenza complessa di Laplace $s$.
+\end{itemize}
+
+\section{Dalle Eq. di Maxwell alle Variabili Circuitali}
+\subsection{Tensione, Forza Elettromotrice (FEM) e Potenziale (DDP)}
+Data una carica $q$ soggetta a una forza elettrica generica $\vec{F}$, si definisce il \textbf{campo elettromotore} come $\vec{E}_m = \vec{F}/q$. Il lavoro compiuto per spostare la carica da $A$ a $B$ definisce la \textbf{tensione} $V_{AB}$:
+\begin{equation}
+    V_{AB} = \int_{A}^{B} \vec{E}_m \cdot d\vec{s} \quad [\mathrm{V}]
+\end{equation}
+La tensione misura sempre una quantità scalare tra due punti dello spazio. L'unità di misura del campo elettrico nei circuiti è spesso in $[\mathrm{V/m}]$.
+
+
+Lungo un percorso chiuso, la circuitazione del campo elettromotore definisce la \textbf{Forza Elettromotrice (FEM)}:
+\begin{equation}
+    \xi = \oint \vec{E}_m \cdot d\vec{s}
+\end{equation}
+
+Nel solo caso di campo elettrostatico conservativo ($\vec{E} = -\vec{\nabla}\phi$), il lavoro non dipende dal percorso e la tensione coincide con la \textbf{Differenza di Potenziale (DDP)}:
+\begin{equation}
+    V_{AB} = \phi_A - \phi_B \implies \oint \vec{E} \cdot d\vec{s} = 0
+\end{equation}
+
+Nel caso generale non statico, la presenza di campi magnetici variabili nel tempo richiede l'uso del potenziale vettore $\vec{A}$:
+\begin{equation}
+    \vec{E} = -\vec{\nabla}\phi - \frac{\partial \vec{A}}{\partial t}
+\end{equation}
+
+\subsection{Densità di Corrente e Corrente Elettrica}
+A livello microscopico, la densità di corrente è legata al campo elettrico dalla relazione $\vec{j} = \sigma \vec{E} = n q \mu \vec{E}$, dove $\sigma$ è la conducibilità, $n$ la densità volumica dei portatori e $\mu$ la mobilità. La corrente elettrica macroscopica $i(t)$ rappresenta il flusso di $\vec{j}$ attraverso una sezione trasversale $A$:
+\begin{equation}
+    i(t) = \frac{dq}{dt} = \iint_{A} \vec{j} \cdot d\vec{A} \quad [\mathrm{A}]
+\end{equation}
+
+\section{Validità delle Leggi di Kirchhoff e Condizioni QSA}
+In ambito elettronico, la risoluzione dei circuiti mediante le variabili di tensione ($V$) e corrente ($I$) si basa sulle leggi di Kirchhoff alle maglie (\textbf{KVL}) e ai nodi (\textbf{KCL}). Tuttavia, tali leggi non costituiscono principi primari dell'elettromagnetismo, ma sono approssimazioni della teoria dei campi descritta dalle equazioni di Maxwell. È quindi fondamentale stabilire i \textbf{limiti di validità} entro cui è lecito adottare tali leggi.
+
+
+\subsection{Limiti di Validità della KVL e Prima Condizione QSA}
+Partiamo dalla III equazione di Maxwell (Legge di Faraday-Neumann-Lenz) nella sua forma locale:
+\begin{equation}
+    \vec{\nabla} \times \vec{E} = -\frac{\partial \vec{B}}{\partial t}
+\end{equation}
+Calcolando l'integrale di linea del campo elettrico $\vec{E}$ lungo un percorso chiuso $C$ (che rappresenta una maglia del circuito avente superficie $S$):
+\begin{equation}
+    \oint_{C} \vec{E} \cdot d\vec{s} = -\iint_{S} \frac{\partial \vec{B}}{\partial t} \cdot d\vec{A} = -\frac{d\Phi(\vec{B})}{dt} = \xi_i
+\end{equation}
+D'altra parte, la \textbf{Legge di Kirchhoff alle Maglie (KVL)} impone che la somma algebrica delle cadute di potenziale lungo una maglia sia identicamente nulla:
+\begin{equation}
+    \sum_{k} V_k = 0 \iff \oint_{C} \vec{E} \cdot d\vec{s} = 0
+\end{equation}
+Uguagliando le due espressioni, notiamo che la KVL risulta matematicamente valida \textbf{se e solo se} il termine di variazione temporale del flusso magnetico concatenato alla maglia è trascurabile. 
+
+Da questa necessità deduttiva ricaviamo la \textbf{Prima Condizione di Quasi-Staticità (QSA \#1)}:
+\begin{equation}
+    \frac{\partial \vec{B}}{\partial t} \approx 0 \implies \vec{\nabla} \times \vec{E} \approx 0 \implies \oint_{C} \vec{E} \cdot d\vec{s} \approx 0
+\end{equation}
+\textit{Significato fisico}: Il campo elettrico viene approssimato come conservativo ($\vec{E} \approx -\vec{\nabla}\phi$). Si assume che il circuito non emetta né assorba radiazione elettromagnetica e che le induttanze parassite distribuite siano trascurabili, isolando la variazione di flusso magnetico unicamente all'interno degli \textbf{induttori concentrati}.
+
+\subsection{Limiti di Validità della KCL e Seconda Condizione QSA}
+Consideriamo la IV equazione di Maxwell (Legge di Ampère-Maxwell):
+\begin{equation}
+    \vec{\nabla} \times \vec{B} = \mu_0 \left( \vec{j} + \varepsilon_0 \frac{\partial \vec{E}}{\partial t} \right)
+\end{equation}
+Applicando l'operatore divergenza ad entrambi i membri ed utilizzando l'identità vettoriale per cui la divergenza di un rotore è nulla ($\vec{\nabla} \cdot (\vec{\nabla} \times \vec{B}) = 0$), otteniamo:
+\begin{equation}
+    \vec{\nabla} \cdot \left( \vec{j} + \varepsilon_0 \frac{\partial \vec{E}}{\partial t} \right) = 0 \implies \vec{\nabla} \cdot \left( \vec{j} + \vec{j}_D \right) = 0
+\end{equation}
+dove $\vec{j}_D = \varepsilon_0 \frac{\partial \vec{E}}{\partial t}$ rappresenta la \textbf{densità di corrente di spostamento}.
+
+La \textbf{Legge di Kirchhoff ai Nodi (KCL)} richiede che la somma delle correnti di conduzione uscenti da un nodo (superficie chiusa attorno al nodo) sia nulla:
+\begin{equation}
+    \sum_{k} I_k = 0 \iff \vec{\nabla} \cdot \vec{j} \approx 0
+\end{equation}
+Confrontando le relazioni, la KCL risulta valida \textbf{se e solo se} la corrente di spostamento $\vec{j}_D$ all'esterno dei componenti è trascurabile rispetto alla corrente di conduzione $\vec{j}$.
+
+Da questa necessità deduttiva ricaviamo la \textbf{Seconda Condizione di Quasi-Staticità (QSA \#2)}:
+\begin{equation}
+    |\vec{j}| \gg \varepsilon_0 \left| \frac{\partial \vec{E}}{\partial t} \right| \implies \vec{j}_D \approx 0 \implies \vec{\nabla} \cdot \vec{j} \approx 0
+\end{equation}
+\textit{Significato fisico}: La corrente di conduzione si comporta come un campo solenoidale (assenza di accumulo locale di carica nei nodi o nei rami), confinando l'effetto della corrente di spostamento unicamente all'interno delle armature dei \textbf{condensatori concentrati}.
+
+\section{Limiti Quantitativi della QSA, Parametri Concentrati e Scaling Tecnologico}
+
+\subsection{Formulazione quantitativa della QSA: tempi, frequenza e lunghezza d'onda}
+Per stabilire in modo quantitativo quando sia lecito applicare l'ipotesi di quasi-staticità ed adottare le leggi di Kirchhoff, occorre confrontare la dinamica temporale del segnale con la velocità di propagazione dei campi elettromagnetici nel circuito.
+
+Si considerino le seguenti grandezze fisiche caratteristiche:
+\begin{itemize}
+    \item $D$: la dimensione spaziale/lineare massima del circuito $[\mathrm{m}]$;
+    \item $c$: la velocità di propagazione del campo elettromagnetico nel mezzo (prossima alla velocità della luce nel vuoto, $c \approx 3 \cdot 10^8\,\mathrm{m/s}$) $[\mathrm{m/s}]$;
+    \item $v(t) = V_0 \sin(\omega t)$: uno stimolo sinusoidale applicato al circuito con frequenza operativa massima $f_{\text{max}}$ e periodo $T_{\text{max}} = \frac{1}{f_{\text{max}}}$.
+\end{itemize}
+
+Il tempo impiegato dal campo elettromagnetico per propagarsi attraverso l'intero circuito è dato da:
+\begin{equation}
+    t_{\text{prop}} = \frac{D}{c}
+\end{equation}
+
+Affinché il campo elettrico e le sue variazioni si trasmettano istantaneamente in tutti i punti del sistema (garantendo l'assenza di ritardi di fase o effetti propagativi lungo i conduttori), il periodo del segnale $T_{\text{max}}$ deve essere molto maggiore del tempo di propagazione $t_{\text{prop}}$:
+\begin{equation}
+    T_{\text{max}} \gg t_{\text{prop}} \iff \frac{1}{f_{\text{max}}} \gg \frac{D}{c}
+\end{equation}
+
+Esprimendo la condizione in termini di \textbf{frequenza operativa massima} $f_{\text{max}}$, si ricava la prima regola empirica fondamentale:
+\begin{equation}
+    f_{\text{max}} \ll \frac{c}{D}
+\end{equation}
+Si noti che con "molto minore/maggiore" si intende un fattore $\approx 10^2$.
+
+In maniera del tutto equivalente, ricordando la relazione fondamentale delle onde $c = \lambda \cdot f$, la condizione può essere espressa confrontando la \textbf{lunghezza d'onda del segnale} $\lambda$ con la dimensione fisica $D$:
+\begin{equation}
+    \lambda = \frac{c}{f_{\text{max}}} \gg D
+\end{equation}
+
+\textit{Conclusione fisica}: L'approssimazione QSA (e di conseguenza l'uso delle leggi di Kirchhoff) è valida se la lunghezza d'onda del segnale è nettamente superiore alle dimensioni fisiche del circuito ($\lambda \gg D$).
+
+\subsection{Sistemi a Parametri Concentrati vs. Distribuiti ed Elettronica RF}
+In base al rispetto o meno della condizione $\lambda \gg D$, i circuiti si dividono in due grandi categorie:
+\begin{enumerate}
+    \item \textbf{Sistemi a Parametri Concentrati (\textit{Lumped Parameter Systems})}: Quando la QSA è verificata ($\lambda \gg D$), le tensioni e le correnti dipendono unicamente dal tempo $t$ e sono uniformi lungo ciascun interconnessione o componente. È il campo d'azione dell'elettronica classica e delle leggi di Kirchhoff.
+    \item \textbf{Sistemi a Parametri Distribuiti (\textit{Distributed Parameter Systems})}: Quando le dimensioni $D$ diventano comparabili con la lunghezza d'onda ($\lambda \sim D$), le variabili $V(x,t)$ e $I(x,t)$ variano continuamente nello spazio $x$.
+    \begin{itemize}
+        \item \textit{Esempio classico}: Il cavo coassiale o le linee di trasmissione, in cui ogni tratto infinitesimo di linea $dx$ presenta resistenza $R_{dx}$, induttanza $L_{dx}$ e capacità $C_{dx}$ distribuite, la cui risoluzione richiede l'equazione dei telegrafisti.
+    \end{itemize}
+\end{enumerate}
+
+Se le condizioni QSA falliscono, il circuito si comporta come un' \textbf{antenna}: emette o riceve radiazione elettromagnetica e genera correnti indotte trasversali. In questo regime, le leggi di Kirchhoff vanno abbandonate ed il circuito deve essere progettato risolvendo le equazioni di Maxwell complete, rientrando nell'ambito dell' \textbf{Elettronica a Radiofrequenza (\textit{RF Electronics})}.
+
+\subsection{Qualche esempio numerico}
+Per comprendere l'impatto pratico della condizione $f_{\text{max}} \ll \frac{c}{ D}$, si confrontano due architetture circuitali:
+
+\begin{itemize}
+    \item \textbf{Schede elettroniche a componenti discreti (anni '60--'70)}:
+    Avente dimensione tipica $D \approx 30\,\mathrm{cm} = 0.3\,\mathrm{m}$.
+    \begin{equation}
+        t_{\text{prop}} = \frac{0.3\,\mathrm{m}}{3 \cdot 10^8\,\mathrm{m/s}} = 1\,\mathrm{ns} \implies \frac{c}{D} = 1\,\mathrm{GHz}
+    \end{equation}
+    Applicando il fattore di sicurezza $10^2$, la massima frequenza di lavoro entro cui valgono le leggi di Kirchhoff è limitata a:
+    \begin{equation}
+        f_{\text{max}} \ll \frac{1\,\mathrm{GHz}}{100} \implies f_{\text{max}} \approx \text{pochi } \mathrm{MHz}
+    \end{equation}
+    Oltre questa frequenza, le piste della scheda da $30\,\mathrm{cm}$ si comporterebbero come antenne.
+    
+    \item \textbf{Circuiti Integrati e Microprocessori (CPU attuali)}:
+    Per operare con frequenze di clock nell'ordine dei $\mathrm{GHz}$ ($f_{\text{max}} \sim 1 \div 3\,\mathrm{GHz}$) senza ricadere nella complessa teoria dell'elettronica a radiofrequenza o nei parametri distribuiti, è \textbf{fisiologicamente indispensabile} ridurre la dimensione $D$ a pochi millimetri o centimetri ($D \sim \mathrm{cm}$).
+\end{itemize}
+
+\subsection{Lo Shrinking Tecnologico e la Legge di Moore}
+La necessità di incrementare la frequenza operativa dei circuiti mantenendo valide le leggi di Kirchhoff ha rappresentato la principale spinta verso la miniaturizzazione dell'elettronica moderna (\textit{dalla microelettronica alla nanoelettronica}).
+
+A differenza dei transistori a giunzione bipolare (BJT), la struttura geometrica del transistore a effetto di campo MOS (\textbf{MOSFET}) presenta un'architettura piana particolarmente semplice:
+\begin{itemize}
+    \item Un substrato di silicio con due pozzetti drogati (Source e Drain) separati da una distanza definita detta lunghezza di canale ($L$);
+    \item Un elettrodo superiore di controllo (\textit{Gate}) separato da un sottile strato di biossido di silicio di spessore $t_{\text{ox}}$.
+\end{itemize}
+
+\textit{(Nota: torneremo più nel dettaglio su questo componente e sulla sua tecnologia nella seconda parte del corso)}.\\
+
+La semplicità geometrica del MOSFET permette un'operazione di scala dimensionale nota come \textit{shrinking} tecnologico:
+\begin{enumerate}
+    \item \textbf{Riduzione del Tempo di Transito e Aumento della Velocità}:
+    Gli elettroni o le lacune trasportati nel canale si muovono con una velocità di deriva $v_{\text{drift}} = \mu E$. Riducendo la lunghezza del canale $L$, la distanza che i portatori devono percorrere diminuisce drasticamente, riducendo il tempo di transito $\tau_{\text{transit}} \propto \frac{L^2}{\mu V}$ . Di conseguenza, il transistore diventa intrinsecamente più veloce e in grado di commutare a frequenze elevate ($\mathrm{GHz}$).
+
+    \item \textbf{Aumento della Densità di Integrazione e Legge di Moore}:
+    La \textbf{Legge di Moore} stabilisce una regola empirica fondamentale secondo cui il numero di transistori integrabili all'interno di un singolo chip di silicio raddoppia indicativamente ogni $1.5 \div 2$ anni. 
+    
+    Lo \textit{shrinking} della lunghezza di canale $L$ consente di stipare un numero sempre maggiore di dispositivi per unità di superficie ($\mathrm{cm}^2$), incrementando la potenza di calcolo. Il chip di silicio vero e proprio, di dimensioni pari a pochi millimetri o centimetri quadrati, viene infine alloggiato e protetto all'interno di un contenitore plastico o ceramico (\textit{package}, come il classico \textit{Dual In-Line Package} -- DIP).
+\end{enumerate}
+    
+  
+% --- CAPITOLI DA INTEGRARE NELLE PROSSIME LEZIONI ---
+\chapter{Bipoli Fondamentali e Analisi nel Dominio di Laplace}
+
+
+% ==========================================
+% PARTE II: TECNOLOGIA CMOS
+% ==========================================
+\part{Tecnologia CMOS}
+
+
+
+
+% ==========================================
+% PARTE III: PROGETTAZIONE DI CIRCUITI INTEGRATI
+% ==========================================
+\part{Progettazione di Circuiti Integrati CMOS}
+
+
+
+\end{document}
